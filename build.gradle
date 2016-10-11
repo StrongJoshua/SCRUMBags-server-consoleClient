@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+defaultTasks 'run'
+mainClassName = 'edu.gatech.scrumbags.console.Client'
+version = new String()
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/']
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile "com.google.code.gson:gson:2.7"
+}
+
+jar {
+	dependsOn "parseVersion"
+	manifest {
+		attributes 'Implementation-Title': 'SCRUMbags\' Clean Water Project Server Console Client',
+					'Implementation-Version': version,
+					'Main-Class' : 'edu.gatech.scrumbags.console.Client'
+	}
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
+task parseVersion {
+	String text = "https://raw.githubusercontent.com/StrongJoshua/Water-World/master/README.md".toURL().text
+	String parsed = (text =~ "Build \\*\\*[(\\d|\\.)]+\\*\\*")[0]
+	version = (parsed =~ "[(\\d|\\.)]+")[0]
+}
