@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -47,8 +46,11 @@ public class Client extends Thread {
 			public void run () {
 				while (running)
 					try {
-						System.out
-							.print(gson.fromJson((String)in.readObject(), Message.class).getPayload()[0]);
+						String[] pl = gson.fromJson((String)in.readObject(), Message.class).getPayload();
+						if (pl.length == 0)
+							System.out.println("Failed to connect to server.");
+						else
+							System.out.print(pl[0]);
 					} catch (ClassNotFoundException | IOException e) {
 					}
 			}
